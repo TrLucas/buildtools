@@ -1,6 +1,6 @@
 [general]
 version = 1.2.3
-author = Eyeo GmbH
+author = eyeo GmbH
 basename = adblockplusedge
 app_id_release = EyeoGmbH.AdblockPlus
 app_id_devbuild = EyeoGmbH.AdblockPlusdevelopmentbuild
@@ -10,12 +10,6 @@ permissions = tabs
   http://*/*
   https://*/*
   contextMenus
-  webRequest
-  webRequestBlocking
-  webNavigation
-  storage
-  unlimitedStorage
-  notifications
 options = options.html
 backgroundScripts = lib/info.js
 extension_id_release = 1.0
@@ -31,3 +25,19 @@ icons = chrome/icons
 [compat]
 edge = 37.14332.1000.0
 windows = 10.0.14332.0/12.0.0.0
+
+[contentScripts]
+planets = content.js
+
+[convert_js]
+lib/foo.js =
+  ext/a.js
+  lib/b.js
+lib/foo.js[module] = true
+lib/foo.js[injectinfomodule] = true
+lib/foo.js[autoload] = icons
+
+[import_locales]
+_modules/*/module.json = =*
+_modules/*/unit.properties = =*
+_imp/*/gecko.dtd = =*

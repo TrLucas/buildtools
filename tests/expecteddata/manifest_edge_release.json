@@ -1,0 +1,37 @@
+{
+  "author": "eyeo GmbH", 
+  "background": {
+    "persistent": true, 
+    "scripts": [
+      "lib/info.js"
+    ]
+  }, 
+  "content_scripts": [
+    {
+      "all_frames": true, 
+      "js": [
+        "content.js"
+      ], 
+      "match_about_blank": true, 
+      "matches": [
+        "http://*/*", 
+        "https://*/*"
+      ], 
+      "run_at": "planets"
+    }
+  ], 
+  "default_locale": "en_US", 
+  "description": "__MSG_description__", 
+  "manifest_version": 2, 
+  "minimum_edge_version": "37.14332.1000.0", 
+  "name": "__MSG_name__", 
+  "options_page": "options.html", 
+  "permissions": [
+    "tabs", 
+    "http://*/*", 
+    "https://*/*", 
+    "contextMenus"
+  ], 
+  "short_name": "__MSG_name__", 
+  "version": "1.2.3"
+}
