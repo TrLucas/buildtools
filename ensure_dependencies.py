@@ -344,6 +344,9 @@ def resolve_deps(repodir, level=0, self_update=True, overrideroots=None, skipdep
     if overrideroots is not None:
         config['_root'] = overrideroots
 
+    # F823
+    vcs = None
+
     for dir, sources in sorted(config.iteritems()):
         if (dir.startswith('_') or
             skipdependencies.intersection([s[0] for s in sources if s[0]])):
@@ -414,13 +417,22 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Verify dependencies for a set of repositories, by default the repository of this script.')
     parser.add_argument('repos', metavar='repository', type=str, nargs='*', help='Repository path')
     parser.add_argument('-q', '--quiet', action='store_true', help='Suppress informational output')
+    parser.add_argument(
+        '--nodejs-only',
+        action='store_true',
+        help='Install Node.js production-only dependencies only'
+    )
     args = parser.parse_args()
 
     if args.quiet:
         logging.disable(logging.INFO)
 
-    repos = args.repos
-    if not len(repos):
-        repos = [os.path.dirname(__file__)]
-    for repo in repos:
-        resolve_deps(repo)
+    if args.nodejs_only:
+        vcs = get_repo_type('.')
+        resolve_npm_dependencies('.', vcs)
+    else:
+        repos = args.repos
+        if not len(repos):
+            repos = [os.path.dirname(__file__)]
+        for repo in repos:
+            resolve_deps(repo)

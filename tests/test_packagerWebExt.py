@@ -29,13 +29,7 @@ LOCALES_MODULE = {
     }
 }
 
-DTD_TEST = ('<!ENTITY access.key "access key(&amp;a)">'
-            '<!ENTITY ampersand "foo &amp;-bar">')
-
-PROPERTIES_TEST = 'description=very descriptive!'
-
 ALL_LANGUAGES = ['en_US', 'de', 'it']
-
 
 MESSAGES_EN_US = json.dumps({
     'name': {'message': 'Adblock Plus'},
@@ -64,20 +58,19 @@ class Content(object):
 
 
 class ZipContent(Content):
-    """Provides a unified context manager for ZipFile access.
+    """Provide a unified context manager for ZipFile access.
 
     Inherits the context manager API from Content.
     If desired, the specified ZipFile is deleted on exiting the manager.
     """
 
     def __init__(self, zip_path, delete_on_close=True):
-        """Constructor of ZipContent handling the file <zip_path>.
+        """Construct ZipContent object handling the file <zip_path>.
 
         The parameter 'delete_on_close' causes the context manager to
         delete the handled ZipFile (specified by zip_path) if set to
         True (default).
         """
-
         self._zip_path = zip_path
         self._zip_file = zipfile.ZipFile(zip_path)
         self._delete_on_close = delete_on_close
@@ -103,9 +96,7 @@ class DirContent(Content):
     """
 
     def __init__(self, path):
-        """Constructor of DirContent handling <path>.
-        """
-
+        """Construct a DirContent object handling <path>."""
         self._path = path
         super(DirContent, self).__init__()
 
@@ -113,9 +104,7 @@ class DirContent(Content):
         pass
 
     def namelist(self):
-        """Generate a list of filenames, as expected from ZipFile.nameslist().
-        """
-
+        """Generate a list of filenames."""
         result = []
         for parent, directories, files in os.walk(self._path):
             for filename in files:
@@ -193,16 +182,10 @@ def srcdir(tmpdir):
 
 
 @pytest.fixture
-def gecko_import(tmpdir):
-    tmpdir.mkdir('_imp').mkdir('en-US').join('gecko.dtd').write(DTD_TEST)
-
-
-@pytest.fixture
 def locale_modules(tmpdir):
     mod_dir = tmpdir.mkdir('_modules')
-    lang_dir = mod_dir.mkdir('en-US')
+    lang_dir = mod_dir.mkdir('en_US')
     lang_dir.join('module.json').write(json.dumps(LOCALES_MODULE))
-    lang_dir.join('unit.properties').write(json.dumps(PROPERTIES_TEST))
 
 
 @pytest.fixture
@@ -242,7 +225,7 @@ def edge_metadata(tmpdir):
 
 @pytest.fixture
 def keyfile(tmpdir):
-    """Test-privatekey for signing chrome release-package"""
+    """Test-privatekey for signing chrome release-package."""
     return os.path.join(os.path.dirname(__file__), 'chrome_rsa.pem')
 
 
@@ -302,32 +285,23 @@ def assert_manifest_content(manifest, expected_path):
     assert len(diff) == 0, '\n'.join(diff)
 
 
-def assert_gecko_locale_conversion(package, prefix):
-    locale = json.loads(package.read(os.path.join(
-        prefix, '_locales/en_US/messages.json')))
-
-    assert locale.get('test_Foobar', {}) == LOCALES_MODULE['test.Foobar']
-    assert locale.get('access_key', {}) == {'message': 'access key'}
-    assert locale.get('ampersand', {}) == {'message': 'foo -bar'}
-    assert locale.get('_description', {}) == {'message': 'very descriptive!"'}
-
-
-def assert_convert_js(package, prefix, excluded=False):
+def assert_webpack_bundle(package, prefix, excluded=False):
     libfoo = package.read(os.path.join(prefix, 'lib/foo.js'))
+    libfoomap = package.read(os.path.join(prefix, 'lib/foo.js.map'))
 
     assert 'var bar;' in libfoo
-    assert 'require.modules["ext_a"]' in libfoo
+    assert 'webpack:///./ext/a.js' in libfoomap
 
     assert ('var foo;' in libfoo) != excluded
-    assert ('require.modules["b"]' in libfoo) != excluded
+    assert ('webpack:///./lib/b.js' in libfoomap) != excluded
 
 
 def assert_devenv_scripts(package, devenv):
     manifest = json.loads(package.read('manifest.json'))
     filenames = package.namelist()
     scripts = [
-            'ext/common.js',
-            'ext/background.js',
+        'ext/common.js',
+        'ext/background.js',
     ]
 
     assert ('qunit/index.html' in filenames) == devenv
@@ -403,7 +377,6 @@ def assert_locale_upfix(package):
 @pytest.mark.usefixtures(
     'all_lang_locales',
     'locale_modules',
-    'gecko_import',
     'icons',
     'lib_files',
     'chrome_metadata',
@@ -483,8 +456,7 @@ def test_build_webext(platform, dev_build_release, keyfile, tmpdir, srcdir,
     with content_class(out_file_path) as package:
         assert_base_files(package, platform)
         assert_all_locales_present(package, prefix)
-        assert_gecko_locale_conversion(package, prefix)
-        assert_convert_js(package, prefix, platform == 'gecko')
+        assert_webpack_bundle(package, prefix, platform == 'gecko')
 
         if platform == 'chrome':
             assert_locale_upfix(package)

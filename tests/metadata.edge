@@ -29,15 +29,11 @@ windows = 10.0.14332.0/12.0.0.0
 [contentScripts]
 planets = content.js
 
-[convert_js]
-lib/foo.js =
-  ext/a.js
-  lib/b.js
-lib/foo.js[module] = true
-lib/foo.js[injectinfomodule] = true
-lib/foo.js[autoload] = icons
-
 [import_locales]
 _modules/*/module.json = =*
 _modules/*/unit.properties = =*
 _imp/*/gecko.dtd = =*
+
+[bundles]
+lib/foo.js = ext/a.js
+  lib/b.js

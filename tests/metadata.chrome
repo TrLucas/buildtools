@@ -19,14 +19,6 @@ webAccessible = images/*.png
 [contentScripts]
 planets = content.js
 
-[convert_js]
-lib/foo.js =
-  ext/a.js
-  lib/b.js
-lib/foo.js[module] = true
-lib/foo.js[injectinfomodule] = true
-lib/foo.js[autoload] = icons
-
 [mapping]
 logo_44.png = chrome/icons/abp-44.png
 foo/logo_50.png = chrome/icons/abp-50.png
@@ -40,3 +32,7 @@ opera = 36.0
 _modules/*/module.json = =*
 _modules/*/unit.properties = =*
 _imp/*/gecko.dtd = =*
+
+[bundles]
+lib/foo.js = ext/a.js
+  lib/b.js

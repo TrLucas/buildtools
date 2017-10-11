@@ -8,7 +8,6 @@ import io
 import json
 import os
 import re
-from StringIO import StringIO
 import struct
 import subprocess
 import sys
@@ -199,7 +198,7 @@ def create_bundles(params, files):
 
     bundles = json.loads(output)
     for bundle in bundles:
-        files[bundle] = bundles[bundle].encode('utf-8')
+        files[bundle[1:]] = bundles[bundle].encode('utf-8')
 
 
 def import_locales(params, files):

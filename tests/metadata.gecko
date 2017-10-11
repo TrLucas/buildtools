@@ -9,5 +9,5 @@ devbuildUpdateURL = https://downloads.adblockplus.org/devbuilds/adblockplusfiref
 [compat]
 gecko = 50.0
 
-[convert_js]
+[bundles]
 lib/foo.js -= lib/b.js
