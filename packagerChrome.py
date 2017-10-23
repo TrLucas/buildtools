@@ -335,6 +335,7 @@ def writePackage(outputFile, pubkey, signature, zipdata):
         file.write(pubkey)
         file.write(signature)
     file.write(zipdata)
+    return file
 
 
 def add_devenv_requirements(files, metadata, params):
@@ -400,4 +401,4 @@ def createBuild(baseDir, type='chrome', outFile=None, buildNum=None, releaseBuil
     if keyFile != None:
         signature = signBinary(zipdata, keyFile)
         pubkey = getPublicKey(keyFile)
-    writePackage(outFile, pubkey, signature, zipdata)
+    return writePackage(outFile, pubkey, signature, zipdata)

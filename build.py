@@ -9,6 +9,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 from functools import partial
 from StringIO import StringIO
 from zipfile import ZipFile
@@ -159,6 +160,35 @@ def build(base_dir, build_num, key_file, release, output_file, platform,
     kwargs['buildNum'] = build_num
 
     packager.createBuild(base_dir, type=platform, **kwargs)
+
+
+def execute_extension(source_dir, platform):
+    cmd = ['npm', 'run', 'start:' + platform, '--', '--source-dir',
+           source_dir]
+    subprocess.check_output(cmd, cwd='./buildtools')
+
+
+@argparse_command(
+    valid_platforms={'gecko'},
+)
+def run_build(base_dir, platform, **kwargs):
+    """
+    Run the extension in side a browser.
+
+    Create a build of the extension (devenv, normal or release build) and try
+    to execute the extension inside Firefox.
+    """
+    import buildtools.packagerChrome as packager
+
+    filename = packager.createBuild(base_dir, type=platform, devenv=True).name
+    try:
+        source_dir = tempfile.mkdtemp(prefix='ext_build')
+        with ZipFile(filename, 'r') as zip_file:
+            zip_file.extractall(source_dir)
+
+        execute_extension(source_dir, platform)
+    finally:
+        shutil.rmtree(source_dir, ignore_errors=True)
 
 
 @argparse_command(

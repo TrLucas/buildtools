@@ -3,11 +3,13 @@
   "repository": "https://hg.adblockplus.org/buildtools",
   "license": "MPL-2.0",
   "dependencies": {
+    "web-ext": "2.2.2",
     "jsdoc": "3.5.5",
     "memory-fs": "0.4.1",
     "webpack": "3.6.0"
   },
   "scripts": {
-    "jsdoc": "jsdoc"
+    "jsdoc": "jsdoc",
+    "start:gecko": "web-ext run --firefox \"firefox -headless\""
   }
 }
