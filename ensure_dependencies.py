@@ -271,7 +271,13 @@ def resolve_npm_dependencies(target, vcs):
         return
 
     try:
-        cmd = ['npm', 'install', '--only=production', '--loglevel=warn']
+        if os.name == 'nt':
+            npm_exec = 'npm.cmd'
+        else:
+            npm_exec = 'npm'
+
+        cmd = [npm_exec, 'install', '--only=production', '--loglevel=warn',
+               '--no-package-lock', '--no-optional']
         subprocess.check_output(cmd, cwd=target)
 
         repo_types[vcs].ignore(os.path.join(target, 'node_modules'), target)
