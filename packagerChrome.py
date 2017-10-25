@@ -324,7 +324,7 @@ def createBuild(baseDir, type='chrome', outFile=None, buildNum=None, releaseBuil
         'devenv': devenv,
         'metadata': metadata,
     }
-
+    import pdb; pdb.set_trace()
     mapped = metadata.items('mapping') if metadata.has_section('mapping') else []
     files = Files(getPackageFiles(params), getIgnoredFiles(params),
                   process=lambda path, data: processFile(path, data, params))

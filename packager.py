@@ -91,10 +91,10 @@ class Files(dict):
         dict.__setitem__(self, key, value)
 
     def isIncluded(self, relpath):
-        return relpath.split('/')[0] in self.includedFiles
+        return relpath.split(os.pathsep)[0] in self.includedFiles
 
     def is_ignored(self, relpath):
-        parts = relpath.split('/')
+        parts = relpath.split(os.pathsep)
         return any(part in self.ignoredFiles for part in parts)
 
     def read(self, path, relpath='', skip=()):
