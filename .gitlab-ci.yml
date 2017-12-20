@@ -1,0 +1,6 @@
+before_script:
+  - apt-get update -qq && apt-get install -y -qq nodejs python-pip
+  - pip install -y tox
+toxtest:
+  script:
+    - tox
