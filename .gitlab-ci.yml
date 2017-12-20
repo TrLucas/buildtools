@@ -1,6 +1,6 @@
 before_script:
-  - apt-get update -qq && apt-get install -y -qq nodejs python-pip
-  - pip install -y tox
+  - sudo apt-get update -qq && apt-get install -y -qq nodejs python-pip
+  - sudo pip install tox
 toxtest:
   script:
     - tox
