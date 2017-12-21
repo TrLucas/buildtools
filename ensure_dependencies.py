@@ -418,6 +418,9 @@ def resolve_deps(repodir, level=0, self_update=True, overrideroots=None, skipdep
 
 
 def _ensure_line_exists(path, pattern):
+    base_path = os.path.split(path)[0]
+    if not os.path.exists(base_path):
+        os.makedirs(base_path)
     with open(path, 'a+') as f:
         f.seek(0, os.SEEK_SET)
         file_content = [l.strip() for l in f.readlines()]
