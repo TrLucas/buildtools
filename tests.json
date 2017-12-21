@@ -1,0 +1,6 @@
+[
+    {  
+        "name": "Tox Integration test",
+        "cmd": "tox"
+    }
+]

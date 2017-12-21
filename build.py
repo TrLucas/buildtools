@@ -375,6 +375,18 @@ def updatepsl(base_dir, **kwargs):
     publicSuffixListUpdater.updatePSL(base_dir)
 
 
+@argparse_command()
+def runtests(base_dir, **kwargs):
+    """Run tests specified in the projects folders.
+
+    Collect all tests in subfolders (defined in tests.json) and execute them,
+    return an appropriate error-code when a test fails.
+    """
+    from autotest import TestCollection
+    tester = TestCollection(base_dir)
+    tester.run()
+
+
 def process_args(base_dir, *args):
     if build_available_subcommands(base_dir):
         MAIN_PARSER.set_defaults(base_dir=base_dir)
