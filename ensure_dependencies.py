@@ -249,6 +249,17 @@ def get_repo_type(repo):
     return 'hg'
 
 
+def resolve_pip_dependencies(target):
+    """Install python dependencies if necessary.
+
+    If a requirements.txt is present, make sure to have it's contents
+    installed via pip.
+    """
+    if os.path.exists(os.path.join(target, 'requirements.txt')):
+        cmd = ['pip', 'install', '-r', 'requirements.txt']
+        subprocess.check_output(cmd, cwd=target)
+
+
 def resolve_npm_dependencies(target, vcs):
     """Install Node.js production-only dependencies if necessary and desired.
 
@@ -353,6 +364,8 @@ def update_repo(target, type, revision):
 
 def resolve_deps(repodir, level=0, self_update=True, overrideroots=None, skipdependencies=set()):
     config = read_deps(repodir)
+    resolve_pip_dependencies(repodir)
+
     if config is None:
         if level == 0:
             logging.warning('No dependencies file in directory %s, nothing to do...\n%s' % (repodir, USAGE))
