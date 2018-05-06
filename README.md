@@ -10,6 +10,7 @@ not directly.
 
 - [The Jinja2 module](http://jinja.pocoo.org/docs) (>= 2.8)
 - [The Pycrypto module](http://pythonhosted.org/pycrypto/) (>= 2.6.1)
+- [The pyyaml module](http://pyyaml.org/) (>= 3.12)
 - [Node.js](https://nodejs.org/) (>= 7)
 
 ## Usage

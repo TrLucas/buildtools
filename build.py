@@ -13,6 +13,7 @@ from functools import partial
 from StringIO import StringIO
 from zipfile import ZipFile
 from buildtools.localeTools import read_locale_config
+from buildtools.ci import lint_gitlab_config, upload_to_stores
 
 KNOWN_PLATFORMS = {'chrome', 'gecko', 'edge', 'generic'}
 
@@ -34,7 +35,8 @@ def make_argument(*args, **kwargs):
     return partial(_make_argument, *args, **kwargs)
 
 
-def argparse_command(valid_platforms=None, multi_platform=False, arguments=()):
+def argparse_command(valid_platforms=None, multi_platform=False,
+                     no_platform=False, arguments=()):
     def wrapper(func):
         def func_wrapper(*args, **kwargs):
             return func(*args, **kwargs)
@@ -49,6 +51,7 @@ def argparse_command(valid_platforms=None, multi_platform=False, arguments=()):
             'multi_platform': multi_platform,
             'function': func,
             'arguments': arguments,
+            'no_platform': no_platform,
         })
         return func_wrapper
     return wrapper
@@ -95,6 +98,7 @@ def build_available_subcommands(base_dir):
 
     for command_params in ALL_COMMANDS:
         multi_platform = command_params.pop('multi_platform')
+        no_platform = command_params.pop('no_platform')
         platforms = types.intersection(command_params.pop('valid_platforms'))
         if len(platforms) > 1:
             if multi_platform:
@@ -104,12 +108,12 @@ def build_available_subcommands(base_dir):
             else:
                 help_text = None
                 action = 'store'
-
-            command_params['arguments'] += (
-                make_argument('-t', '--type', dest='platform', required=True,
-                              choices=platforms, action=action,
-                              help=help_text),
-            )
+            if not no_platform:
+                command_params['arguments'] += (
+                    make_argument('-t', '--type', dest='platform',
+                                  required=True, choices=platforms,
+                                  action=action, help=help_text),
+                )
             make_subcommand(**command_params)
         elif len(platforms) == 1:
             sub_parser = make_subcommand(**command_params)
@@ -373,6 +377,25 @@ def updatepsl(base_dir, **kwargs):
     """
     import buildtools.publicSuffixListUpdater as publicSuffixListUpdater
     publicSuffixListUpdater.updatePSL(base_dir)
+
+
+@argparse_command(no_platform=True)
+def lint_ci(base_dir, **kwargs):
+    """Lint the .gitlab-ci.yaml file.
+
+    Test the .gitlab-ci.yaml file for validity.
+    """
+    lint_gitlab_config(base_dir)
+
+
+@argparse_command()
+def upload(base_dir, platform, **kwargs):
+    """Upload the latest build for PLATFORM to it's store.
+
+    Find the the latest build for PLATFORM, upload that file to the platform's
+    store and downdload it afterwarfs (if necessary)
+    """
+    upload_to_stores(base_dir, platform)
 
 
 def process_args(base_dir, *args):
