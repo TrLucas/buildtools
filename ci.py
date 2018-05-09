@@ -15,7 +15,6 @@ import uuid
 from urllib import urlencode
 import urllib2
 
-import yaml
 # from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
 import Crypto.Hash.SHA256
@@ -204,6 +203,7 @@ def upload_to_stores(base_dir, platform):
 
 
 def lint_gitlab_config(base_dir):
+    import yaml
     filename = '.gitlab-ci.yml'
 
     with io.open(os.path.join(base_dir, filename), 'rt') as fp:

@@ -10,8 +10,11 @@ not directly.
 
 - [The Jinja2 module](http://jinja.pocoo.org/docs) (>= 2.8)
 - [The Pycrypto module](http://pythonhosted.org/pycrypto/) (>= 2.6.1)
-- [The pyyaml module](http://pyyaml.org/) (>= 3.12)
 - [Node.js](https://nodejs.org/) (>= 7)
+
+To run CI-related commands, you will also need:
+- [The pyyaml module](http://pyyaml.org/) (>= 3.12)
+- [The urllib3 module](https://pypi.org/project/urllib3/) (>= 1.22)
 
 ## Usage
 
