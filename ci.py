@@ -44,7 +44,7 @@ class Uploader(object):
             print 'attempting to upload ' + filename
             self.upload_to_amo(filename)
             tries = 0
-            while tries < 5:
+            while tries < 10:
                 if self.download_from_amo():
                     print 'DONE!'
                     break
@@ -160,7 +160,6 @@ class Uploader(object):
                                      get_extension(self.platform))
         downloaded = os.path.join(
             self.base_dir,
-            self.basename,
             filename,
         )
 
