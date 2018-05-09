@@ -41,9 +41,11 @@ class Uploader(object):
     def __call__(self):
         filename = self.find_artifact()
         if self.platform == 'gecko':
+            print 'attempting to upload ' + filename
+            self.upload_to_amo(filename)
             tries = 0
             while tries < 5:
-                if self.upload_to_amo(filename):
+                if self.download_from_amo():
                     print 'DONE!'
                     break
                 tries += 1
@@ -162,8 +164,10 @@ class Uploader(object):
             filename,
         )
 
-        necessary = ['passed_review', 'reviewed', 'processed', 'valid']
-        if all(response[x] for x in necessary):
+        reviewed = response['passed_review'] and response['reviewed']
+        processed = response['processed']
+        valid = response['valid']
+        if all([reviewed, processed, valid]):
             download_url = response['files'][0]['download_url']
             checksum = response['files'][0]['hash']
 
@@ -189,7 +193,7 @@ class Uploader(object):
 
             finished = True
 
-        elif not response['passed_review'] or not response['valid']:
+        elif (not reviewed or not valid) and processed:
             # When the review failed for any reason, we want to know about it
             logging.error(json.dumps(response, indent=4))
             raise RuntimeError('Review did not pass!')
